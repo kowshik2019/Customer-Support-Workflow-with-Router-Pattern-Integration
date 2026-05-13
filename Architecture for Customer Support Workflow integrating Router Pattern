@@ -1,0 +1,22 @@
+
+Customer Support Workflow Integration with Router Pattern Architecture
+
+classify → urgency → first_router (category-based)
+    ├─→ payment_handler  ─┐
+    ├─→ login_handler    ─┤
+    ├─→ refund_handler   ─┤
+    ├─→ bug_handler      ─┼─→ escalation_decision
+    └─→ general_handler  ─┘
+                               ↓
+                        escalate=True?
+                        /           \
+                    yes/             \no
+                    /                 \
+            second_router          close_or_escalate (RESOLVED)
+            (team router)                    ↓
+                |                          END
+                ├─ route_to_payments_team
+                ├─ route_to_engineering_team
+                ├─ route_to_identity_team
+                ├─ route_to_logistics_team
+                └─ route_to_general_support
