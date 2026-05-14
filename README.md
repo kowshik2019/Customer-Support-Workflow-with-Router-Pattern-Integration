@@ -1,37 +1,38 @@
-# 🛟 AI Customer Support Agent — Router Pattern Edition
 
-An intelligent, end-to-end customer-support automation agent built with **LangGraph**, **OpenAI**, and **Streamlit**. The agent ingests a free-text customer complaint, classifies it, scores its urgency, routes it to a **category-specific specialist handler**, drafts an empathetic response with a concrete resolution playbook, and decides whether to auto-resolve the ticket or escalate it to a human team.
+🛟 AI Customer Support Agent — Router Pattern Edition
 
-This edition implements the **Router Pattern** — instead of a single generalist node handling every type of issue, the workflow branches after classification into one of five specialist handlers, each with its own domain knowledge and resolution logic.
+An intelligent, end-to-end customer-support automation agent built with LangGraph, OpenAI, and Streamlit. The agent ingests a free-text customer complaint, classifies it, scores its urgency, routes it to a category-specific specialist handler, drafts an empathetic response with a concrete resolution playbook, and decides whether to auto-resolve the ticket or escalate it to a human team.
+
+This edition implements the Router Pattern — instead of a single generalist node handling every type of issue, the workflow branches after classification into one of five specialist handlers, each with its own domain knowledge and resolution logic.
 
 ---
 
-## 📌 Project Description
+📌 Project Description
 
-Modern support inboxes drown in tickets that all look different — payment failures, login issues, refund delays, app crashes, general questions. Human agents spend most of their time **reading, classifying, prioritizing, and writing similar replies** before doing any actual problem-solving. This project automates that first 80% so humans only handle tickets that truly need their judgment.
+Modern support inboxes drown in tickets that all look different — payment failures, login issues, refund delays, app crashes, general questions. Human agents spend most of their time reading, classifying, prioritizing, and writing similar replies before doing any actual problem-solving. This project automates that first 80% so humans only handle tickets that truly need their judgment.
 
-**What this agent does, for every incoming complaint:**
+What this agent does, for every incoming complaint:
 
-1. Reads the complaint text and **classifies** it into one of five categories
-2. **Scores urgency** on a four-level scale (LOW / MEDIUM / HIGH / CRITICAL)
-3. **Routes** the ticket to a specialist handler that understands that category's domain
-4. **Generates** a customer-facing response plus a 4–6 step resolution playbook
-5. Applies **rule-based escalation logic** to either auto-resolve or hand off to a human team
+1. Reads the complaint text and classifies it into one of five categories
+2. Scores urgency on a four-level scale (LOW / MEDIUM / HIGH / CRITICAL)
+3. Routes the ticket to a specialist handler that understands that category's domain
+4. Generates a customer-facing response plus a 4–6 step resolution playbook
+5. Applies rule-based escalation logic to either auto-resolve or hand off to a human team
 6. Returns full state to the Streamlit UI for review
 
-**Key design principles**
+Key design principles
 
-- **Specialization over generalization** — five focused handlers, each tuned with domain expertise (bank settlement windows for payments, lockout SLAs for logins, etc.)
-- **LLM-where-it-helps, code-where-it-matters** — classification, urgency, and response generation use the LLM; routing and escalation decisions are pure Python rules so product/ops teams can change policy without prompt engineering
-- **Full observability** — every node writes to a shared trace log, viewable in the UI
-- **Graceful degradation** — every LLM output is validated; unknown values fall back to safe defaults
-- **Maintainability first** — adding a new category means adding one handler function and one router entry; nothing else changes
+- Specialization over generalization — five focused handlers, each tuned with domain expertise (bank settlement windows for payments, lockout SLAs for logins, etc.)
+- LLM-where-it-helps, code-where-it-matters — classification, urgency, and response generation use the LLM; routing and escalation decisions are pure Python rules so product/ops teams can change policy without prompt engineering
+- Full observability — every node writes to a shared trace log, viewable in the UI
+- Graceful degradation — every LLM output is validated; unknown values fall back to safe defaults
+- Maintainability first — adding a new category means adding one handler function and one router entry; nothing else changes
 
 ---
 
-## 🏗️ Architecture & Workflow
+🏗️ Architecture & Workflow
 
-### Visual Workflow
+ Visual Workflow
 
 ```
                     ┌─→ payment_handler  ─┐
@@ -46,7 +47,7 @@ classify → urgency ─┼─→ refund_handler   ─┼─→ decide → final
                   picks the next node
 ```
 
-### Step-by-Step Workflow
+Step-by-Step Workflow
 
 | Step | Node | What Happens | Powered By |
 |------|------|--------------|------------|
@@ -58,7 +59,7 @@ classify → urgency ─┼─→ refund_handler   ─┼─→ decide → final
 | 6 | `finalize` | Stamps terminal status: `RESOLVED` or `ESCALATED` | Python |
 | 7 | UI render | Streamlit displays metrics, response, steps, routing, and trace | Streamlit |
 
-### Categories Handled
+Categories Handled
 
 | Category | Specialist Handler | Domain Knowledge Embedded |
 |---|---|---|
@@ -68,7 +69,7 @@ classify → urgency ─┼─→ refund_handler   ─┼─→ decide → final
 | 🐞 Technical Bug | `bug_handler` | Device/OS/app version collection, standard quick fixes, crash-report request, engineering review SLA |
 | 💬 General Inquiry | `general_handler` | Warm catch-all; refuses to invent answers; safe fallback for anything that doesn't fit |
 
-### Escalation Rules
+Escalation Rules
 
 These live in `escalation_decision()` as plain Python — easy to tune without touching prompts:
 
@@ -87,11 +88,11 @@ else:                                                  # Auto-resolve
     escalate = False
 ```
 
-This is the **maintainability seam** — when your org adds a new team or changes routing policy, you change rules here without retraining anything.
+This is the maintainability seam — when your org adds a new team or changes routing policy, you change rules here without retraining anything.
 
 ---
 
-## 📁 Project Structure
+📁 Project Structure
 
 ```
 customer_support_agent/
@@ -105,28 +106,28 @@ customer_support_agent/
 
 ---
 
-## ⚙️ Prerequisites
+Prerequisites
 
 Before you start, make sure you have:
 
-1. **Python 3.10 or newer** installed
+1. Python 3.10 or newer installed
    - Check with: `python --version`
    - Download from https://www.python.org/downloads/ if needed
-2. **An OpenAI API key** with available credits
+2. An OpenAI API key with available credits
    - Get one from https://platform.openai.com/api-keys
    - Verify billing is set up at https://platform.openai.com/settings/organization/billing
-3. **A code editor** (Visual Studio Code recommended)
-4. **A terminal** (PowerShell on Windows, Terminal on Mac/Linux, or VS Code's integrated terminal)
+3. A code editor (Visual Studio Code recommended)
+4. A terminal (PowerShell on Windows, Terminal on Mac/Linux, or VS Code's integrated terminal)
 
 ---
 
-## 🚀 Step-by-Step Setup & Execution
+Step-by-Step Setup & Execution
 
-### Step 1 — Get the Project Files
+Step 1 — Get the Project Files
 
 Place all the files (`workflow.py`, `app.py`, `requirements.txt`, `.env.example`, `README.md`) into a folder named `customer_support_agent`.
 
-### Step 2 — Open a Terminal in the Project Folder
+Step 2 — Open a Terminal in the Project Folder
 
 ```bash
 cd path/to/customer_support_agent
@@ -144,23 +145,23 @@ ls
 
 You should see `workflow.py`, `app.py`, etc.
 
-### Step 3 — (Recommended) Create a Virtual Environment
+Step 3 — (Recommended) Create a Virtual Environment
 
 This keeps the project's dependencies isolated from your system Python.
 
-**Windows (PowerShell):**
+Windows (PowerShell):
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 ```
 
-**Windows (Command Prompt):**
+Windows (Command Prompt):
 ```cmd
 python -m venv .venv
 .venv\Scripts\activate.bat
 ```
 
-**Mac/Linux:**
+Mac/Linux:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
@@ -168,7 +169,7 @@ source .venv/bin/activate
 
 Your terminal prompt should now show `(.venv)` at the start.
 
-### Step 4 — Install Dependencies
+Step 4 — Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -176,16 +177,16 @@ pip install -r requirements.txt
 
 This installs LangGraph, OpenAI SDK, Streamlit, python-dotenv, and their transitive dependencies. Takes 1–2 minutes the first time.
 
-### Step 5 — Configure Your OpenAI API Key
+Step 5 — Configure Your OpenAI API Key
 
 Copy the template:
 
-**Windows:**
+Windows:
 ```cmd
 copy .env.example .env
 ```
 
-**Mac/Linux:**
+Mac/Linux:
 ```bash
 cp .env.example .env
 ```
@@ -197,7 +198,7 @@ OPENAI_API_KEY=sk-proj-your-real-key-here
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-**Save the file.** Make sure:
+Save the file. Make sure:
 - No quotes around the key
 - No spaces around the `=` sign
 - The whole key is on ONE line (no wraps)
@@ -205,7 +206,7 @@ OPENAI_MODEL=gpt-4o-mini
 
 > 💡 The project uses `load_dotenv(override=True)`, which means `.env` always wins over any leftover shell-level environment variables. Safe by default.
 
-### Step 6 — (Optional) Sanity-Check from CLI
+Step 6 — (Optional) Sanity-Check from CLI
 
 Before launching the UI, you can verify the workflow runs end-to-end:
 
@@ -215,7 +216,7 @@ python workflow.py
 
 You'll see the full JSON state for the built-in payment-deducted example printed to the console. If you see a JSON blob with `"status": "ESCALATED"` and `"handler_used": "payment_handler"`, everything works.
 
-### Step 7 — Launch the Streamlit UI
+Step 7 — Launch the Streamlit UI
 
 ```bash
 streamlit run app.py
@@ -230,14 +231,14 @@ Local URL: http://localhost:8501
 
 Open that URL in your browser.
 
-### Step 8 — Test the Agent
+Step 8 — Test the Agent
 
 In the UI:
 
-1. **Pick an example** from the dropdown on the left (e.g., "💳 Payment failed but money deducted")
-2. Click **🚀 Run support agent**
+1. Pick an example from the dropdown on the left (e.g., "💳 Payment failed but money deducted")
+2. Click Run support agent
 3. Watch the right-hand panel render:
-   - Four top metrics: **Category**, **Urgency**, **Handler**, **Status**
+   - Four top metrics: Category, Urgency, Handler, Status
    - A blue card with the suggested customer response
    - A numbered list of resolution steps
    - A red/green banner showing the routing decision
@@ -245,19 +246,13 @@ In the UI:
 
 Try all five examples to see different handlers fire and different escalation paths.
 
-### Step 9 — Stop the App
+Step 9 — Stop the App
 
-In the terminal running Streamlit, press **Ctrl+C**.
+In the terminal running Streamlit, press Ctrl+C.
 
-To exit the virtual environment when you're done:
+To exit the virtual environment when you're done: /exit
 
-```bash
-deactivate
-```
-
----
-
-## 🧪 Try These Test Scenarios
+Try These Test Scenarios
 
 The Streamlit UI ships with example complaints, but feel free to type your own:
 
@@ -272,22 +267,22 @@ The Streamlit UI ships with example complaints, but feel free to type your own:
 
 ---
 
-## 🔧 Configuration
+Configuration
 
 All configuration lives in `.env`:
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `OPENAI_API_KEY` | *(required)* | Your OpenAI API key |
+| `OPENAI_API_KEY` | *(required)* | Your OpenAI API key | Get your API key from open AI Keys Usage and navigate to API Key Create a new key and use it workflow in VS Code.
 | `OPENAI_MODEL` | `gpt-4o-mini` | Any OpenAI chat-completions model. `gpt-4o-mini` is fast and cheap; `gpt-4o` is more capable for ambiguous tickets |
 
 ---
 
-## 🛠️ Extending the Project
+Extending the Project
 
 The Router Pattern makes the project highly extensible. Common extensions:
 
-### Add a new category
+Add a new category
 
 1. Add it to the `CATEGORY` Literal in `workflow.py`
 2. Update the classifier prompt's allowed list
@@ -296,11 +291,11 @@ The Router Pattern makes the project highly extensible. Common extensions:
 5. Register the new node and edge in `build_graph()`
 6. (Optional) Add an escalation rule in `escalation_decision`
 
-### Add a clarifying-question loop
+Add a clarifying-question loop
 
 When the classifier's confidence is low, instead of immediately escalating, add a node that asks the customer for more details. This becomes a **second router** based on confidence.
 
-### Add real tools to handlers
+Add real tools to handlers
 
 - `payment_handler` could call a real Stripe API to look up the transaction
 - `bug_handler` could create a Jira ticket
@@ -308,43 +303,16 @@ When the classifier's confidence is low, instead of immediately escalating, add 
 
 Each handler is now an isolated unit, so adding tools to one doesn't touch the others.
 
-### Persist tickets
+Persist tickets
 
 Wire `finalize` to also write the final state to a database (SQLite, Postgres) so you build an audit trail.
 
 ---
 
-## 🐛 Troubleshooting
+ Tech Stack
 
-| Symptom | Likely Cause | Fix |
-|---|---|---|
-| `OPENAI_API_KEY missing` error in sidebar | `.env` file missing or not named correctly | Create `.env` in the project folder, not `.env.txt` |
-| `401 Incorrect API key` error | Key revoked, mistyped, or no billing on OpenAI account | Generate a new key, replace `.env` contents, restart Streamlit |
-| Streamlit still shows the OLD key after editing `.env` | Streamlit process cached the previous environment | Press Ctrl+C in the terminal, run `streamlit run app.py` again |
-| Browser refresh doesn't apply key change | Same as above — Streamlit needs a full restart | Stop and re-run the `streamlit run` command |
-| `ModuleNotFoundError: langgraph` | Dependencies not installed (or wrong virtualenv active) | Re-run `pip install -r requirements.txt` inside the activated venv |
-| All tickets land in General Inquiry | Classifier returning unfamiliar category | The validator force-maps unknown categories to General Inquiry — check raw state in the UI expander to debug |
+- [LangGraph](https://github.com/langchain-ai/langgraph) — state-graph framework that powers the workflow, including the conditional edges that implement the Router Pattern
+- [OpenAI Python SDK](https://github.com/openai/openai-python) — calls `gpt-4o-mini` (or any chosen model) in strict JSON mode for reliable structured output
+- [Streamlit](https://streamlit.io/) — instant Python-to-web UI; no HTML/CSS/JS required
+- [python-dotenv](https://github.com/theskumar/python-dotenv) — loads secrets from `.env` so they stay out of code and out of git
 
----
-
-## 📚 Tech Stack
-
-- **[LangGraph](https://github.com/langchain-ai/langgraph)** — state-graph framework that powers the workflow, including the conditional edges that implement the Router Pattern
-- **[OpenAI Python SDK](https://github.com/openai/openai-python)** — calls `gpt-4o-mini` (or any chosen model) in strict JSON mode for reliable structured output
-- **[Streamlit](https://streamlit.io/)** — instant Python-to-web UI; no HTML/CSS/JS required
-- **[python-dotenv](https://github.com/theskumar/python-dotenv)** — loads secrets from `.env` so they stay out of code and out of git
-
----
-
-## 📝 License & Use
-
-This is a learning/demo project. Use it as a starting point for production support automation, but before deploying anywhere customer-facing, add:
-
-- Rate limiting on the OpenAI calls
-- Logging and metrics (e.g., Langfuse, OpenTelemetry)
-- Ticket persistence (database)
-- Authentication on the Streamlit UI
-- Prompt-injection guardrails on user complaints
-- Cost monitoring and per-customer quotas
-
-Happy building! 🚀
