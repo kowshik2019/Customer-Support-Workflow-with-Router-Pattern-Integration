@@ -1,0 +1,23 @@
+# =============================================================================
+# Customer Support Agent — Router Pattern Edition
+# Python dependencies
+# =============================================================================
+# Install with:  pip install -r requirements.txt
+# Tested on:     Python 3.10, 3.11, 3.12
+# -----------------------------------------------------------------------------
+
+# Core orchestration framework — builds the multi-node state graph
+# and powers the Router Pattern via conditional edges
+langgraph>=0.2.0
+
+# Required dependency of LangGraph (state management, base abstractions)
+langchain-core>=0.3.0
+
+# OpenAI Python SDK — used by every specialist handler for LLM calls
+openai>=1.40.0
+
+# Streamlit — interactive web UI for submitting tickets and viewing results
+streamlit>=1.36.0
+
+# python-dotenv — loads OPENAI_API_KEY (and other secrets) from a .env file
+python-dotenv>=1.0.1
