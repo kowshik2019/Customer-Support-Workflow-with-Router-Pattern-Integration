@@ -1,5 +1,5 @@
 
-🛟 AI Customer Support Agent — Router Pattern Edition
+🛟 AI Customer Support Agent — Router Pattern Integration to the Workflow
 
 An intelligent, end-to-end customer-support automation agent built with LangGraph, OpenAI, and Streamlit. The agent ingests a free-text customer complaint, classifies it, scores its urgency, routes it to a category-specific specialist handler, drafts an empathetic response with a concrete resolution playbook, and decides whether to auto-resolve the ticket or escalate it to a human team.
 
